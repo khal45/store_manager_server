@@ -1,15 +1,8 @@
-import { postLogin } from "../controllers/authController.js";
 import express from "express";
-import bodyParser from "body-parser";
-import dotenv from "dotenv";
-dotenv.config();
+import { verifyToken } from "../middleware/authMiddleware.js";
+import verifyUserToken from "../controllers/authController.js";
+const authRouter = express.Router();
 
-const loginRouter = express.Router();
+authRouter.get("/", verifyToken, verifyUserToken);
 
-// middleware
-
-loginRouter.use(bodyParser.json());
-loginRouter.use(bodyParser.urlencoded({ extended: true }));
-
-loginRouter.post("/", postLogin);
-export default loginRouter;
+export default authRouter;

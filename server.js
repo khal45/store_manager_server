@@ -3,6 +3,7 @@ import {
   productRouter,
   userRouter,
   salesRouter,
+  authRouter,
 } from "./src/routes/index.js";
 import express from "express";
 import cookieParser from "cookie-parser";
@@ -24,6 +25,7 @@ app.use(express.static(path.join(__dirname, "../frontend/node_modules")));
 const port = process.env.PORT || 3000;
 
 // routes
+app.use("/api/v1/auth", authRouter);
 app.use("/api/v1", loginRouter);
 app.use("/api/v1/products", productRouter);
 app.use("/api/v1/users", userRouter);

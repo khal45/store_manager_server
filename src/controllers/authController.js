@@ -1,42 +1,16 @@
-import users from "../database/usersDb.js";
-import { compareSync } from "bcrypt";
-import jwt from "jsonwebtoken";
-import dotenv from "dotenv";
-dotenv.config();
+const verifyUserToken = (req, res) => {
+  try {
+    const { username, role } = req.user;
 
-const accessKey = process.env.ACCESS_TOKEN_SECRET;
+    if (!username || !role) {
+      return res.status(400).json({ message: "Invalid token payload" });
+    }
 
-const postLogin = (req, res) => {
-  const { username, password } = req.body;
-  const user = users.find((user) => user.username === username);
-
-  if (!user) {
-    return res
-      .status(401)
-      .json({ success: false, message: "user does not exist" });
-  }
-
-  const passwordsMatch = compareSync(password, user.password);
-
-  if (passwordsMatch) {
-    const accessToken = jwt.sign(
-      { id: user.id, username: user.username, role: user.role },
-      accessKey,
-      {
-        expiresIn: "1d",
-      }
-    );
-
-    return res.status(200).json({
-      success: true,
-      accessToken,
-      message: `welcome ${user.username}`,
-    });
-  } else {
-    return res
-      .status(401)
-      .json({ success: false, message: "incorrect password" });
+    res.status(200).json({ username, role });
+  } catch (err) {
+    console.error("Token verification error:", err);
+    res.status(500).json({ message: "Internal server error" });
   }
 };
 
-export { postLogin };
+export default verifyUserToken;
